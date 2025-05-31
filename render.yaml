@@ -1,5 +1,5 @@
 services:
-  - type: worker   # или web, если у тебя web-сервис
+  - type: worker
     name: telegram-bot
     runtime: python
     buildCommand: ""
