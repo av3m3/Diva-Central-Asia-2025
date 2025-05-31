@@ -1,5 +1,5 @@
 services:
-  - type: worker
+  - type: worker   # или web, если у тебя web-сервис
     name: telegram-bot
     runtime: python
     buildCommand: ""
@@ -7,3 +7,4 @@ services:
     envVars:
       - key: TELEGRAM_TOKEN
         value: 8196984264:AAE4Y3f_RpzmoPN-s6iXJhgA72bVoXiZCoM
+
