@@ -11,14 +11,42 @@ from telegram.ext import (
     ConversationHandler, ContextTypes, filters
 )
 
-# ... Твой код с хендлерами и функциями без изменений ...
-
 AWAITING_ANSWERS, AWAITING_PHOTOS = range(2)
 
 TOKEN = '8196984264:AAE4Y3f_RpzmoPN-s6iXJhgA72bVoXiZCoM'
 ADMIN_CHAT_ID = 1870625035  # Замените на ваш ID
 
-# (Весь твой код функций сюда, без изменений)
+# --- Здесь твои все async функции-хендлеры, как в твоём коде ---
+# start, show_regulations, participant_form, additional_info, back_to_menu,
+# participation_application, receive_answers, receive_photos,
+# save_registration, cancel
+
+# Ниже для примера покажу только один, остальные вставь свои без изменений:
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message:
+        await update.message.reply_text('Выберите пункт меню:', reply_markup=get_main_menu())
+        context.user_data.pop('regulation_message_id', None)
+    elif update.callback_query:
+        query = update.callback_query
+        await query.answer()
+        if 'regulation_message_id' in context.user_data:
+            try:
+                await query.message.chat.delete_message(context.user_data['regulation_message_id'])
+            except Exception:
+                pass
+            context.user_data.pop('regulation_message_id')
+
+        await query.edit_message_text('Выберите пункт меню:', reply_markup=get_main_menu())
+
+def get_main_menu():
+    keyboard = [
+        [InlineKeyboardButton("📝 Регламент конкурса", callback_data='regulations')],
+        [InlineKeyboardButton("✏️ Анкета участника", callback_data='participant_form')],
+        [InlineKeyboardButton("🎥 Заявка на участие", callback_data='participation_application')],
+        [InlineKeyboardButton("⚙️ Дополнительная информация", callback_data='additional_info')]
+    ]
+    return InlineKeyboardMarkup(keyboard)
 
 app_api = FastAPI()
 
@@ -31,10 +59,10 @@ def run_webserver():
     uvicorn.run(app_api, host="0.0.0.0", port=port)
 
 def main():
-    # Запускаем FastAPI сервер в отдельном потоке, чтобы слушал порт
+    # Запускаем веб-сервер в отдельном потоке (чтобы Render видел прослушиваемый порт)
     threading.Thread(target=run_webserver, daemon=True).start()
 
-    # Запускаем Telegram-бота, как обычно
+    # Строим и запускаем Telegram-бота
     app = ApplicationBuilder().token(TOKEN).build()
 
     conv_handler = ConversationHandler(
