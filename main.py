@@ -1,18 +1,19 @@
 import os
-from telegram.ext import Updater, CommandHandler
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from telegram import Update
 
-def start(update, context):
-    pass  # Пока ничего не делает
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Бот запущен и работает!")
 
 def main():
-    TOKEN = os.environ.get("TELEGRAM_TOKEN")  # ← читаем из окружения
-    updater = Updater(TOKEN)
-    dp = updater.dispatcher
+    token = os.environ.get("TELEGRAM_TOKEN")
+    if not token:
+        print("❌ TELEGRAM_TOKEN не найден в переменных окружения.")
+        return
 
-    dp.add_handler(CommandHandler("start", start))
-
-    updater.start_polling()
-    updater.idle()
+    app = ApplicationBuilder().token(token).build()
+    app.add_handler(CommandHandler("start", start))
+    app.run_polling()
 
 if __name__ == '__main__':
     main()
