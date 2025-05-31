@@ -1,14 +1,14 @@
 import os
 from telegram import Update
 from telegram.ext import (
-    ApplicationBuilder, CommandHandler, CallbackContext,
+    ApplicationBuilder, CommandHandler, ContextTypes,
     CallbackQueryHandler, ConversationHandler
 )
 from fastapi import FastAPI, Request
 import uvicorn
 
 # Обработчики
-async def start(update: Update, context: CallbackContext.DEFAULT_TYPE):
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Привет! Бот работает через webhook.")
 
 # FastAPI для Render
