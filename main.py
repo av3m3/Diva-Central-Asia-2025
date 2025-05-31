@@ -1,10 +1,12 @@
 import os
+from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from fastapi import FastAPI, Request
 import uvicorn
 
-# Обработчик команды /start
+load_dotenv()
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Привет! Бот работает через webhook.")
 
@@ -36,7 +38,4 @@ async def process_update(request: Request):
 
 def main():
     port = int(os.environ.get("PORT", 10000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port)
-
-if __name__ == "__main__":
-    main()
+    uvicorn.run("main:app",
