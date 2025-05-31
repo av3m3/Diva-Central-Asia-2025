@@ -26,13 +26,11 @@ async def show_regulations(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     pdf_path = "DIVA CENTRAL ASIA 25- РЕГЛАМЕНТ.pdf"
 
-    # Удаляем исходное сообщение с кнопками (откуда пришёл callback)
     try:
         await query.message.delete()
     except Exception:
         pass
 
-    # Отправляем файл и сохраняем ID сообщения
     with open(pdf_path, 'rb') as pdf_file:
         sent_message = await query.message.chat.send_document(
             document=pdf_file,
@@ -40,7 +38,6 @@ async def show_regulations(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     context.user_data['regulation_message_id'] = sent_message.message_id
 
-    # Отправляем сообщение с кнопкой "Назад"
     keyboard = [[InlineKeyboardButton("⬅️ Назад", callback_data='back_to_menu')]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await query.message.chat.send_message(
@@ -51,12 +48,10 @@ async def show_regulations(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         await update.message.reply_text('Выберите пункт меню:', reply_markup=get_main_menu())
-        # При старте очищаем сохраненный message_id файла
         context.user_data.pop('regulation_message_id', None)
     elif update.callback_query:
         query = update.callback_query
         await query.answer()
-        # Удаляем файл если есть
         if 'regulation_message_id' in context.user_data:
             try:
                 await query.message.chat.delete_message(context.user_data['regulation_message_id'])
@@ -100,7 +95,6 @@ async def back_to_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    # Удаляем сообщение с регламентом (PDF), если есть
     if 'regulation_message_id' in context.user_data:
         try:
             await query.message.chat.delete_message(context.user_data['regulation_message_id'])
@@ -108,13 +102,11 @@ async def back_to_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             pass
         context.user_data.pop('regulation_message_id')
 
-    # Удаляем текущее сообщение (с кнопкой "Назад" или другим контентом)
     try:
         await query.message.delete()
     except Exception:
         pass
 
-    # Отправляем главное меню заново
     await query.message.chat.send_message('Выберите пункт меню:', reply_markup=get_main_menu())
 
 async def participation_application(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -187,8 +179,8 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
     return ConversationHandler.END
 
-def main():
-    app = ApplicationBuilder().token(TOKEN).build()
+def get_application(token: str):
+    app = ApplicationBuilder().token(token).build()
 
     conv_handler = ConversationHandler(
         entry_points=[CallbackQueryHandler(participation_application, pattern='participation_application')],
@@ -210,7 +202,13 @@ def main():
     app.add_handler(CallbackQueryHandler(additional_info, pattern='additional_info'))
     app.add_handler(CallbackQueryHandler(back_to_menu, pattern='back_to_menu'))
 
-    app.run_polling()
+    return app
 
-if __name__ == '__main__':
-    main()
+# Если хочешь запускать polling локально — раскомментируй ниже
+# async def main():
+#     app = get_application(TOKEN)
+#     await app.run_polling()
+#
+# if __name__ == '__main__':
+#     import asyncio
+#     asyncio.run(main())
