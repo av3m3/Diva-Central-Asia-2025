@@ -1,12 +1,12 @@
 services:
   - type: web
-    name: telegram-bot
-    runtime: python
-    buildCommand: ""
-    startCommand: python main.py
+    name: diva-central-asia-2025
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python main.py"
     envVars:
       - key: TELEGRAM_TOKEN
-        value: <твой_токен>
+        fromSecret: TELEGRAM_TOKEN
       - key: WEBHOOK_DOMAIN
-        value: https://<твой-проект>.onrender.com
-
+        value: "https://diva-central-asia-2025.onrender.com"
