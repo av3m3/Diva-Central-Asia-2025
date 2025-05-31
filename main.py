@@ -26,6 +26,8 @@ application.add_handler(CommandHandler("start", start))
 
 @app.on_event("startup")
 async def on_startup():
+    # ВАЖНО! Инициализируем приложение, без этого — ошибка
+    await application.initialize()
     print(f"Устанавливаем webhook: {WEBHOOK_URL}")
     await application.bot.set_webhook(WEBHOOK_URL)
 
@@ -33,6 +35,7 @@ async def on_startup():
 async def process_update(request: Request):
     json_data = await request.json()
     update = Update.de_json(json_data, application.bot)
+    # Убеждаемся, что приложение инициализировано перед обработкой update
     await application.process_update(update)
     return "ok"
 
