@@ -13,7 +13,7 @@ from telegram.ext import (
 
 AWAITING_ANSWERS, AWAITING_PHOTOS = range(2)
 
-TOKEN = '8196984264:AAE4Y3f_RpzmoPN-s6iXJhgA72bVoXiZCoM'
+TOKEN = os.getenv("TELEGRAM_TOKEN")
 ADMIN_CHAT_ID = 1870625035  # Замените на ваш ID
 
 # --- Здесь твои все async функции-хендлеры, как в твоём коде ---
