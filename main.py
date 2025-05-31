@@ -4,7 +4,7 @@ def start(update, context):
     pass  # Пока ничего не делает
 
 def main():
-    TOKEN = '8196984264:AAE4Y3f_RpzmoPN-s6iXJhgA72bVoXiZCoM'
+    TOKEN = os.environ.get("TELEGRAM_TOKEN")  # ← читаем из окружения
     updater = Updater(TOKEN)
     dp = updater.dispatcher
 
