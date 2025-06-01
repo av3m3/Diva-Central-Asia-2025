@@ -81,7 +81,7 @@ async def participation_application(update: Update, context: ContextTypes.DEFAUL
         "📌 Ответьте одним сообщением на:\n\n"
         "1️⃣ Имя и фамилия\n2️⃣ Псевдоним\n3️⃣ Возраст\n4️⃣ Город\n"
         "5️⃣ Опыт\n6️⃣ Репертуар\n7️⃣ Телефон и email\n\n"
-        "Затем отправьте 3–4 фото."
+        "Затем отправьте 3–4 фото отдельным сообщением, и нажать кнопку сохранить заявку."
     )
     await query.message.reply_text(text)
     return AWAITING_ANSWERS
@@ -115,7 +115,7 @@ async def save_registration(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = query.from_user
     await context.bot.send_message(ADMIN_CHAT_ID, f"Заявка от @{user.username or user.full_name}:\n\n{answers}")
     await context.bot.send_media_group(ADMIN_CHAT_ID, [InputMediaPhoto(p) for p in photos])
-    await query.edit_message_text("Заявка отправлена организаторам! Спасибо.")
+    await query.edit_message_text("Заявка отправлена организаторам! Дирекция клуба в течение трёх-пяти дней оповестит Вас о проходе в следующий тур конкурса.")
     context.user_data.clear()
     return ConversationHandler.END
 
